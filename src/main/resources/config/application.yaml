@@ -1,0 +1,4 @@
+gmail:
+    authentication:
+        username: test@gmail.com
+        password: test
