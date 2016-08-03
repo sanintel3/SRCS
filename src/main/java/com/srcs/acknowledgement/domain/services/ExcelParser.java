@@ -1,6 +1,7 @@
 package com.srcs.acknowledgement.domain.services;
 
 import com.srcs.acknowledgement.domain.Donation;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,6 +14,8 @@ import java.util.List;
 
 import static com.srcs.datatypes.Email.newEmail;
 import static com.srcs.datatypes.Money.newMoney;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK;
 
 /**
  * Created by santhosh on 09/07/16.
@@ -29,20 +32,28 @@ public class ExcelParser {
 
         for (int rowIndex = 1; rowIndex < statementSheet.getPhysicalNumberOfRows(); rowIndex++) {
             Row currentRow = statementSheet.getRow(rowIndex);
-            if(currentRow.getCell(0).getNumericCellValue() == 0){
+            boolean isBlankRow = currentRow == null || currentRow.getCell(0).getNumericCellValue() == 0;
+            if (isBlankRow) {
                 break;
             }
 
-            Date date = currentRow.getCell(2).getDateCellValue();
             String transactionType = currentRow.getCell(6).getStringCellValue();
-            double amount = currentRow.getCell(7).getNumericCellValue();
-            String email = currentRow.getCell(9).getStringCellValue();
 
             if ("CR".equalsIgnoreCase(transactionType)) {
-                donations.add(new Donation(newEmail(email), newMoney(amount), date));
+                Date date = currentRow.getCell(2).getDateCellValue();
+                double amount = currentRow.getCell(7).getNumericCellValue();
+                String email = findEmail(currentRow);
+                if(isNotEmpty(email)){
+                    donations.add(new Donation(newEmail(email), newMoney(amount), date));
+                }
             }
         }
 
         return donations;
+    }
+
+    private String findEmail(Row currentRow) {
+        Cell emailCell = currentRow.getCell(9);
+        return emailCell.getCellType() == CELL_TYPE_BLANK ? "" : emailCell.getStringCellValue();
     }
 }
