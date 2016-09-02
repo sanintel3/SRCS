@@ -20,6 +20,10 @@ idea {
     }
 }
 
+bootRun {
+    jvmArgs = ['-Xdebug', '-Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=y']
+}
+
 jar {
     baseName = 'srcs'
     version =  '0.1.0'
@@ -40,15 +44,16 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
+    compile("org.springframework.boot:spring-boot-starter-freemarker")
     compile("org.springframework.boot:spring-boot-starter-jetty")
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("javax.mail:javax.mail-api:1.5.5")
+    compile("org.springframework.boot:spring-boot-devtools")
     compile 'com.sun.mail:javax.mail:1.5.5'
     compile 'org.apache.poi:poi:3.14'
     compile 'org.apache.poi:poi-ooxml:3.14'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'org.springframework:spring-context-support:4.2.7.RELEASE'
-    compile 'org.freemarker:freemarker:2.3.23'
     compile 'org.apache.commons:commons-lang3:3.4'
     testCompile("junit:junit")
 }

@@ -14,6 +14,7 @@ public class BaseController {
     @ResponseStatus(value= HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public String handleException(Exception e){
+        e.printStackTrace();
         return e.getMessage();
     }
 }

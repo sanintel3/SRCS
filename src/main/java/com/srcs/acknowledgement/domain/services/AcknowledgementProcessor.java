@@ -4,6 +4,7 @@ import com.srcs.acknowledgement.domain.EmailStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -23,7 +24,7 @@ public class AcknowledgementProcessor {
         this.emailSender = emailSender;
     }
 
-    public List<EmailStatus> process() throws Exception {
-        return excelParser.parseDonations().stream().map(emailSender::send).collect(toList());
+    public List<EmailStatus> process(InputStream statementContent) throws Exception {
+        return excelParser.parseDonations(statementContent).stream().map(emailSender::send).collect(toList());
     }
 }

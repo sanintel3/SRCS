@@ -8,6 +8,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -25,8 +26,8 @@ public class EmailBody {
     private final Configuration configuration;
 
     @Autowired
-    public EmailBody(@Qualifier("freemarkerConfiguration") Configuration configuration) {
-        this.configuration = configuration;
+    public EmailBody(FreeMarkerConfigurer freeMarkerConfigurer) {
+        this.configuration = freeMarkerConfigurer.getConfiguration();
     }
 
     public String content(Donation donation) throws IOException, TemplateException {

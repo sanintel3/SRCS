@@ -4,6 +4,10 @@ import freemarker.cache.ClassTemplateLoader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactory;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
@@ -21,16 +25,6 @@ public class SrcsConfig {
     private String username;
     @Value("${gmail.authentication.password}")
     private String password;
-
-    @Bean
-    public freemarker.template.Configuration freemarkerConfiguration() {
-        ClassTemplateLoader classPathLoader = new ClassTemplateLoader(this.getClass().getClassLoader(), "ftl");
-
-        freemarker.template.Configuration configuration = new freemarker.template.Configuration(VERSION_2_3_0);
-        configuration.setTemplateLoader(classPathLoader);
-
-        return configuration;
-    }
 
     @Bean
     public Session mailSession() {

@@ -23,9 +23,8 @@ import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK;
 @Component
 public class ExcelParser {
 
-    public List<Donation> parseDonations() throws Exception {
+    public List<Donation> parseDonations(InputStream statement) throws Exception {
 
-        InputStream statement = this.getClass().getClassLoader().getResourceAsStream("monthlyStatement.xls");
         Sheet statementSheet = new XSSFWorkbook(statement).getSheetAt(0);
 
         List<Donation> donations = new ArrayList<>();
