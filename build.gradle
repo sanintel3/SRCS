@@ -6,12 +6,16 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.6.RELEASE")
         classpath("org.springframework:springloaded:1.2.6.RELEASE")
+        classpath('se.transmode.gradle:gradle-docker:1.2')
     }
 }
+
+group = 'sanintel3'
 
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
+apply plugin: 'docker'
 
 idea {
     module {
@@ -21,7 +25,8 @@ idea {
 }
 
 bootRun {
-    jvmArgs = ['-Xdebug', '-Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=y']
+    //jvmArgs = ['-Xdebug', '-Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=y', '-Dspring.config.location=/var/app/srcs/conf/']
+    jvmArgs = ['-Dspring.config.location=/var/app/srcs/conf/']
 }
 
 jar {
@@ -36,9 +41,6 @@ springBoot {
 repositories {
     mavenCentral()
 }
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web") {
@@ -60,4 +62,16 @@ dependencies {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.14'
+}
+
+task buildDocker(type: Docker, dependsOn: build) {
+    push = true
+    applicationName = jar.baseName
+    dockerfile = file('src/main/docker/Dockerfile')
+    doFirst {
+        copy {
+            from jar
+            into stageDir
+        }
+    }
 }
