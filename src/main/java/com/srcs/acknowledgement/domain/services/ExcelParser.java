@@ -23,6 +23,10 @@ import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK;
 @Component
 public class ExcelParser {
 
+    private static final int DATE_COLUMN = 1;
+    private static final int CREDIT_COLUMN = 6;
+    private static final int EMAIL_COLUMN = 8;
+
     public List<Donation> parseDonations(InputStream statement) throws Exception {
 
         Sheet statementSheet = new XSSFWorkbook(statement).getSheetAt(0);
@@ -31,16 +35,11 @@ public class ExcelParser {
 
         for (int rowIndex = 1; rowIndex < statementSheet.getPhysicalNumberOfRows(); rowIndex++) {
             Row currentRow = statementSheet.getRow(rowIndex);
-            boolean isBlankRow = currentRow == null || currentRow.getCell(0).getNumericCellValue() == 0;
-            if (isBlankRow) {
-                break;
-            }
 
-            String transactionType = currentRow.getCell(6).getStringCellValue();
+            if(notBlankRow(currentRow) && creditTransaction(currentRow)) {
 
-            if ("CR".equalsIgnoreCase(transactionType)) {
-                Date date = currentRow.getCell(2).getDateCellValue();
-                double amount = currentRow.getCell(7).getNumericCellValue();
+                Date date = currentRow.getCell(DATE_COLUMN).getDateCellValue();
+                double amount = currentRow.getCell(CREDIT_COLUMN).getNumericCellValue();
                 String email = findEmail(currentRow);
                 if(isNotEmpty(email)){
                     donations.add(new Donation(newEmail(email), newMoney(amount), date));
@@ -51,8 +50,17 @@ public class ExcelParser {
         return donations;
     }
 
+    private boolean notBlankRow(Row currentRow) {
+        return currentRow != null && currentRow.getCell(0).getNumericCellValue() != 0;
+    }
+
+    private boolean creditTransaction(Row currentRow) {
+        String creditAmount = currentRow.getCell(CREDIT_COLUMN).getStringCellValue();
+        return isNotEmpty(creditAmount);
+    }
+
     private String findEmail(Row currentRow) {
-        Cell emailCell = currentRow.getCell(9);
+        Cell emailCell = currentRow.getCell(EMAIL_COLUMN);
         return emailCell.getCellType() == CELL_TYPE_BLANK ? "" : emailCell.getStringCellValue();
     }
 }
