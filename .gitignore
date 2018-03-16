@@ -6,7 +6,6 @@
 *.xls
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
